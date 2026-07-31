@@ -4,17 +4,17 @@
 	android:layout_width="wrap_content"
 	android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/wallpaperView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"/>
-    
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#55000000"/>
-    
+	<ImageView
+		android:id="@+id/wallpaperView"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:scaleType="centerCrop"/>
+
+	<View
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:background="#55000000"/>
+
 	<LinearLayout
 		android:orientation="vertical"
 		android:layout_width="match_parent"
@@ -33,20 +33,26 @@
 				android:layout_height="wrap_content"
 				android:text="Start"
 				android:textColor="#FFFFFF"
-				android:textSize="42sp"
-				/>
+				android:textSize="42sp"/>
 
 			<LinearLayout
 				android:orientation="horizontal"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:gravity="right|center"/>
+				android:gravity="right|center">
+                
+                <SearchView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/searchBar"/>
+                
+            </LinearLayout>
 
 		</LinearLayout>
 
 		<FrameLayout
 			android:layout_width="match_parent"
-			android:layout_height="match_parent">		
+			android:layout_height="match_parent">
 
 			<ScrollView
 				android:layout_width="match_parent"
