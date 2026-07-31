@@ -8,11 +8,13 @@ import android.app.WallpaperManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.view.MotionEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
@@ -23,7 +25,6 @@ import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import java.util.List;
-import android.os.Looper;
 
 public class MainActivity extends Activity {
     public static final int ccLandscape = 5;
@@ -86,6 +87,7 @@ public class MainActivity extends Activity {
 
         wallpaperView = findViewById(R.id.wallpaperView);
         title = findViewById(R.id.title);
+        tileGrid = findViewById(R.id.tileGrid);
 
         // 1. Get an instance of WallpaperManager
         WallpaperManager wallpaperManager = WallpaperManager.getInstance(this);
@@ -96,6 +98,108 @@ public class MainActivity extends Activity {
         // 3. Set it to an ImageView or background        
         wallpaperView.setImageDrawable(wallpaperDrawable);
 
+        populateTiles();
+
+        orientationEventListener =
+            new OrientationEventListener(this) {
+
+            @Override
+            public void onOrientationChanged(int orientation) {
+
+                if (orientation == ORIENTATION_UNKNOWN)
+                    return;
+
+                int rotation;
+
+                // Orientation is returned in degrees (0-359)
+                // 0: Portrait (natural)
+                // 90: Landscape (left side up)
+                // 180: Upside down
+                // 270: Landscape (right side up)
+                if (orientation >= 315 || orientation < 45) {
+                    rotation = 0;
+                } else if (orientation < 135) {
+                    rotation = 90;
+                } else if (orientation < 225) {
+                    rotation = 180;
+                } else {
+                    rotation = 270;
+                }
+
+                if (rotation != currentRotation) {
+                    currentRotation = rotation;
+
+                    // LANDSCAPE
+                    if (currentRotation == 90) {
+                        //tileGrid.setRowCount(rcLandscape);
+                        tileGrid.setColumnCount(ccLandscape);
+                        tileGrid.removeAllViews();
+                        populateTiles();
+                        tileGrid.requestLayout();
+                        tileGrid.invalidate();
+                        //tileGrid.setOrientation(GridLayout.HORIZONTAL);
+                    }
+                    if (currentRotation == 270) {
+                        //tileGrid.setRowCount(rcLandscape);
+                        tileGrid.setColumnCount(ccLandscape);
+                        tileGrid.removeAllViews();
+                        populateTiles();
+                        tileGrid.requestLayout();
+                        tileGrid.invalidate();
+                        //tileGrid.setOrientation(GridLayout.HORIZONTAL);
+                    }
+
+                    // PORTRAIT
+                    if (currentRotation == 180) {
+                        //tileGrid.setRowCount(rcPortrait);
+                        tileGrid.setColumnCount(ccPortrait);
+                        tileGrid.removeAllViews();
+                        populateTiles();
+                        tileGrid.requestLayout();
+                        tileGrid.invalidate();
+                        //tileGrid.setOrientation(GridLayout.VERTICAL);
+                    }
+                    if (currentRotation == 0) {
+                        //tileGrid.setRowCount(rcPortrait);
+                        tileGrid.setColumnCount(ccPortrait);
+                        tileGrid.removeAllViews();
+                        populateTiles();
+                        tileGrid.requestLayout();
+                        tileGrid.invalidate();
+                        //tileGrid.setOrientation(GridLayout.VERTICAL);
+                    }
+                }
+            }
+        };
+
+        orientationEventListener.enable();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        orientationEventListener.enable();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        orientationEventListener.enable();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        orientationEventListener.disable();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        orientationEventListener.disable();
+    }
+
+    public void populateTiles() {     
         Intent intent = new Intent(Intent.ACTION_MAIN, null);
         intent.addCategory(Intent.CATEGORY_LAUNCHER);
 
@@ -103,8 +207,6 @@ public class MainActivity extends Activity {
 
         final List<ResolveInfo> apps =
             pm.queryIntentActivities(intent, 0);
-
-        tileGrid = findViewById(R.id.tileGrid);
 
         //tileGrid.setColumnCount(ccPortrait);
         //tileGrid.setRowCount(rcPortrait);
@@ -245,101 +347,7 @@ public class MainActivity extends Activity {
                         });
                 }
             }).start();
-
-        orientationEventListener =
-            new OrientationEventListener(this) {
-
-            @Override
-            public void onOrientationChanged(int orientation) {
-
-                if (orientation == ORIENTATION_UNKNOWN)
-                    return;
-
-                int rotation;
-
-                // Orientation is returned in degrees (0-359)
-                // 0: Portrait (natural)
-                // 90: Landscape (left side up)
-                // 180: Upside down
-                // 270: Landscape (right side up)
-                if (orientation >= 315 || orientation < 45) {
-                    rotation = 0;
-                } else if (orientation < 135) {
-                    rotation = 90;
-                } else if (orientation < 225) {
-                    rotation = 180;
-                } else {
-                    rotation = 270;
-                }
-
-                if (rotation != currentRotation) {
-                    currentRotation = rotation;
-
-                    // LANDSCAPE
-                    if (currentRotation == 90) {
-                        //tileGrid.setRowCount(rcLandscape);
-                        tileGrid.setColumnCount(ccLandscape);
-                        tileGrid.requestLayout();
-                        tileGrid.invalidate();
-                        //tileGrid.setOrientation(GridLayout.HORIZONTAL);
-                    }
-                    if (currentRotation == 270) {
-                        //tileGrid.setRowCount(rcLandscape);
-                        tileGrid.setColumnCount(ccLandscape);
-                        tileGrid.requestLayout();
-                        tileGrid.invalidate();
-                        //tileGrid.setOrientation(GridLayout.HORIZONTAL);
-                    }
-
-                    // PORTRAIT
-                    if (currentRotation == 180) {
-                        //tileGrid.setRowCount(rcPortrait);
-                        tileGrid.setColumnCount(ccPortrait);
-                        tileGrid.requestLayout();
-                        tileGrid.invalidate();
-                        //tileGrid.setOrientation(GridLayout.VERTICAL);
-                    }
-                    if (currentRotation == 0) {
-                        //tileGrid.setRowCount(rcPortrait);
-                        tileGrid.setColumnCount(ccPortrait);
-                        tileGrid.requestLayout();
-                        tileGrid.invalidate();
-                        //tileGrid.setOrientation(GridLayout.VERTICAL);
-                    }
-                }
-            }
-        };
-
-        orientationEventListener.enable();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        orientationEventListener.enable();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        orientationEventListener.enable();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        orientationEventListener.disable();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        orientationEventListener.disable();
-    }
-    
-    /* public void populateTiles() {
-        
-    } */
+    } 
 
     private void launchAppWithWindowsEffect(final View clickedTile, final String packageName) {
         // 1. Configure the 3D perspective animation (Tilt from 0 to -25 degrees)
@@ -403,23 +411,24 @@ public class MainActivity extends Activity {
         }
     }
 
-
     /*
-     @Override
-     public void onConfigurationChanged(Configuration newConfig) {
-     int orientation =
-     getResources().getConfiguration().orientation;
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        int orientation =
+            getResources().getConfiguration().orientation;
 
-     if (orientation ==
-     Configuration.ORIENTATION_LANDSCAPE) {
+        if (orientation ==
+            Configuration.ORIENTATION_LANDSCAPE) {
+            tileGrid.setColumnCount(ccLandscape);
+            tileGrid.removeAllViews();
+            populateTiles();
 
-     tileGrid.setColumnCount(6);
-
-     } else {
-
-     tileGrid.setColumnCount(4);
-     }
-     super.onConfigurationChanged(newConfig);
-     }*/
-
+        } else {
+            tileGrid.setColumnCount(ccPortrait);
+            tileGrid.removeAllViews();
+            populateTiles();
+        }
+        super.onConfigurationChanged(newConfig);
+    }
+    */
 }
