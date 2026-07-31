@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import java.util.List;
+import android.os.Looper;
 
 public class MainActivity extends Activity {
     public static final int ccLandscape = 5;
@@ -83,6 +84,168 @@ public class MainActivity extends Activity {
             }
         }
 
+        wallpaperView = findViewById(R.id.wallpaperView);
+        title = findViewById(R.id.title);
+
+        // 1. Get an instance of WallpaperManager
+        WallpaperManager wallpaperManager = WallpaperManager.getInstance(this);
+
+        // 2. Retrieve the wallpaper as a Drawable
+        Drawable wallpaperDrawable = wallpaperManager.getDrawable();
+
+        // 3. Set it to an ImageView or background        
+        wallpaperView.setImageDrawable(wallpaperDrawable);
+
+        Intent intent = new Intent(Intent.ACTION_MAIN, null);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+
+        final PackageManager pm = getPackageManager();
+
+        final List<ResolveInfo> apps =
+            pm.queryIntentActivities(intent, 0);
+
+        tileGrid = findViewById(R.id.tileGrid);
+
+        //tileGrid.setColumnCount(ccPortrait);
+        //tileGrid.setRowCount(rcPortrait);
+
+        new Thread(new Runnable(){
+                @Override
+                public void run() {
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                for (final ResolveInfo app : apps) {
+
+                                    tile = getLayoutInflater()
+                                        .inflate(R.layout.tile, tileGrid, false);
+
+                                    final ImageView icon =
+                                        tile.findViewById(R.id.icon);
+
+                                    final TextView appTitle =
+                                        tile.findViewById(R.id.appTitle);
+
+                                    icon.setImageDrawable(app.loadIcon(pm));
+
+                                    Typeface segoer = Typeface.createFromAsset(getAssets(), 
+                                                                               "segoe_ui_regular.ttf");
+                                    appTitle.setTypeface(segoer);
+                                    appTitle.setText(app.loadLabel(pm));                      
+
+                                    tileGrid.addView(tile);
+
+                                    final int i;
+                                    for (i = 0; i < tileGrid.getChildCount(); i++) {
+                                        final View tile = tileGrid.getChildAt(i);
+                                        if (compatibilityCheck) {
+                                            launch =
+                                                pm.getLaunchIntentForPackage(
+                                                apps.get(i).activityInfo.packageName);
+
+                                            options = ActivityOptions.makeCustomAnimation(
+                                                MainActivity.this, 
+                                                R.anim.pers_enter, // The target app enters with this
+                                                R.anim.pers_exit   // Your launcher exits with this
+                                            );
+
+                                            tile.setOnClickListener(new OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View v) {                       
+                                                        // Google blocks makeCustomAnimation starting on Android 10 (API Level 29)
+                                                        // Due to malicious apps preventing to hijacking apps
+                                                        startActivity(launch, options.toBundle());
+//                        overridePendingTransition(R.anim.pers_enter, 
+//                                                  R.anim.pers_exit);
+                                                    }
+                                                });
+                                        } else {
+                                            tile.setOnTouchListener(new View.OnTouchListener() {
+                                                    @Override
+                                                    public boolean onTouch(View v, MotionEvent event) {
+
+                                                        switch (event.getAction()) {
+                                                            case MotionEvent.ACTION_DOWN:
+//                                                ValueAnimator scaleIn = ValueAnimator.ofFloat(1f, 0.6f);
+//                                                scaleIn.setDuration(500);
+//                                                scaleIn.setInterpolator(new AccelerateInterpolator());
+//                                                scaleIn.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+//
+//                                                        @Override
+//                                                        public void onAnimationUpdate(ValueAnimator animation) {
+//                                                            float scale = animation.getAnimatedValue();
+//                                                            tile.setScaleX(scale);
+//                                                            tile.setScaleY(scale);
+//                                                        }
+//
+//                                                    });
+//                                                scaleIn.start();
+
+                                                                tile.animate()
+                                                                    .setDuration(200)
+                                                                    .setInterpolator(new AccelerateInterpolator())
+                                                                    .scaleX(0.8f)
+                                                                    .scaleY(0.8f)
+                                                                    .start();
+                                                                break;
+
+                                                            case MotionEvent.ACTION_UP:
+                                                            case MotionEvent.ACTION_CANCEL:
+//                                                ValueAnimator scaleOut = ValueAnimator.ofFloat(0.6f, 1f);
+//                                                scaleOut.setDuration(500);
+//                                                scaleOut.setInterpolator(new AccelerateInterpolator());
+//                                                scaleOut.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+//
+//                                                        @Override
+//                                                        public void onAnimationUpdate(ValueAnimator animation) {
+//                                                            float scale = animation.getAnimatedValue();
+//                                                            tile.setScaleX(scale);
+//                                                            tile.setScaleY(scale);
+//                                                        }
+//
+//                                                    });
+//                                                scaleOut.start();
+                                                                tile.animate()
+                                                                    .setDuration(200)
+                                                                    .setInterpolator(new AccelerateInterpolator())
+                                                                    .scaleX(1f)
+                                                                    .scaleY(1f)
+                                                                    .start();
+                                                                break;
+                                                        }
+
+                                                        return false;
+                                                    }
+                                                });
+                                            tile.setOnClickListener(new View.OnClickListener() {
+
+                                                    @Override
+                                                    public void onClick(View view) {                                         
+                                                        launchAppWithWindowsEffect(tile,
+                                                                                   apps.get(i).activityInfo.packageName);
+                                                    }
+                                                });
+                                        }
+
+                                        searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                                                @Override
+                                                public boolean onQueryTextSubmit(String query) { return false; }
+
+                                                @Override
+                                                public boolean onQueryTextChange(String newText) {
+                                                    filterGrid(tileGrid, newText);
+                                                    return true;
+                                                }
+                                            });
+
+                                    }
+                                }
+                            }
+                        });
+                }
+            }).start();
+
         orientationEventListener =
             new OrientationEventListener(this) {
 
@@ -116,11 +279,15 @@ public class MainActivity extends Activity {
                     if (currentRotation == 90) {
                         //tileGrid.setRowCount(rcLandscape);
                         tileGrid.setColumnCount(ccLandscape);
+                        tileGrid.requestLayout();
+                        tileGrid.invalidate();
                         //tileGrid.setOrientation(GridLayout.HORIZONTAL);
                     }
                     if (currentRotation == 270) {
                         //tileGrid.setRowCount(rcLandscape);
                         tileGrid.setColumnCount(ccLandscape);
+                        tileGrid.requestLayout();
+                        tileGrid.invalidate();
                         //tileGrid.setOrientation(GridLayout.HORIZONTAL);
                     }
 
@@ -128,175 +295,22 @@ public class MainActivity extends Activity {
                     if (currentRotation == 180) {
                         //tileGrid.setRowCount(rcPortrait);
                         tileGrid.setColumnCount(ccPortrait);
+                        tileGrid.requestLayout();
+                        tileGrid.invalidate();
                         //tileGrid.setOrientation(GridLayout.VERTICAL);
                     }
                     if (currentRotation == 0) {
                         //tileGrid.setRowCount(rcPortrait);
                         tileGrid.setColumnCount(ccPortrait);
+                        tileGrid.requestLayout();
+                        tileGrid.invalidate();
                         //tileGrid.setOrientation(GridLayout.VERTICAL);
                     }
                 }
             }
         };
 
-        orientationEventListener.enable();wallpaperView = findViewById(R.id.wallpaperView);
-        title = findViewById(R.id.title);
-
-        // 1. Get an instance of WallpaperManager
-        WallpaperManager wallpaperManager = WallpaperManager.getInstance(this);
-
-        // 2. Retrieve the wallpaper as a Drawable
-        Drawable wallpaperDrawable = wallpaperManager.getDrawable();
-
-        // 3. Set it to an ImageView or background        
-        wallpaperView.setImageDrawable(wallpaperDrawable);
-
-
-
-        Intent intent = new Intent(Intent.ACTION_MAIN, null);
-        intent.addCategory(Intent.CATEGORY_LAUNCHER);
-
-        final PackageManager pm = getPackageManager();
-
-        final List<ResolveInfo> apps =
-            pm.queryIntentActivities(intent, 0);
-
-        tileGrid = findViewById(R.id.tileGrid);
-
-        //tileGrid.setColumnCount(ccPortrait);
-        //tileGrid.setRowCount(rcPortrait);
-
-        runOnUiThread(new Runnable(){
-                @Override
-                public void run() {
-                    for (final ResolveInfo app : apps) {
-
-                        tile = getLayoutInflater()
-                            .inflate(R.layout.tile, tileGrid, false);
-
-                        final ImageView icon =
-                            tile.findViewById(R.id.icon);
-
-                        final TextView appTitle =
-                            tile.findViewById(R.id.appTitle);
-
-                        icon.setImageDrawable(app.loadIcon(pm));
-
-                        Typeface segoer = Typeface.createFromAsset(getAssets(), 
-                                                                   "segoe_ui_regular.ttf");
-                        appTitle.setTypeface(segoer);
-                        appTitle.setText(app.loadLabel(pm));                      
-
-                        tileGrid.addView(tile);
-
-                        final int i;
-                        for (i = 0; i < tileGrid.getChildCount(); i++) {
-                            final View tile = tileGrid.getChildAt(i);
-                            if (compatibilityCheck) {
-                                launch =
-                                    pm.getLaunchIntentForPackage(
-                                    apps.get(i).activityInfo.packageName);
-
-                                options = ActivityOptions.makeCustomAnimation(
-                                    MainActivity.this, 
-                                    R.anim.pers_enter, // The target app enters with this
-                                    R.anim.pers_exit   // Your launcher exits with this
-                                );
-
-                                tile.setOnClickListener(new OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {                       
-                                            // Google blocks makeCustomAnimation starting on Android 10 (API Level 29)
-                                            // Due to malicious apps preventing to hijacking apps
-                                            startActivity(launch, options.toBundle());
-//                        overridePendingTransition(R.anim.pers_enter, 
-//                                                  R.anim.pers_exit);
-                                        }
-                                    });
-                            } else {
-                                tile.setOnTouchListener(new View.OnTouchListener() {
-                                        @Override
-                                        public boolean onTouch(View v, MotionEvent event) {
-
-                                            switch (event.getAction()) {
-                                                case MotionEvent.ACTION_DOWN:
-//                                                ValueAnimator scaleIn = ValueAnimator.ofFloat(1f, 0.6f);
-//                                                scaleIn.setDuration(500);
-//                                                scaleIn.setInterpolator(new AccelerateInterpolator());
-//                                                scaleIn.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-//
-//                                                        @Override
-//                                                        public void onAnimationUpdate(ValueAnimator animation) {
-//                                                            float scale = animation.getAnimatedValue();
-//                                                            tile.setScaleX(scale);
-//                                                            tile.setScaleY(scale);
-//                                                        }
-//
-//                                                    });
-//                                                scaleIn.start();
-
-                                                    tile.animate()
-                                                        .setDuration(200)
-                                                        .setInterpolator(new AccelerateInterpolator())
-                                                        .scaleX(0.8f)
-                                                        .scaleY(0.8f)
-                                                        .start();
-                                                    break;
-
-                                                case MotionEvent.ACTION_UP:
-                                                case MotionEvent.ACTION_CANCEL:
-//                                                ValueAnimator scaleOut = ValueAnimator.ofFloat(0.6f, 1f);
-//                                                scaleOut.setDuration(500);
-//                                                scaleOut.setInterpolator(new AccelerateInterpolator());
-//                                                scaleOut.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-//
-//                                                        @Override
-//                                                        public void onAnimationUpdate(ValueAnimator animation) {
-//                                                            float scale = animation.getAnimatedValue();
-//                                                            tile.setScaleX(scale);
-//                                                            tile.setScaleY(scale);
-//                                                        }
-//
-//                                                    });
-//                                                scaleOut.start();
-                                                    tile.animate()
-                                                        .setDuration(200)
-                                                        .setInterpolator(new AccelerateInterpolator())
-                                                        .scaleX(1f)
-                                                        .scaleY(1f)
-                                                        .start();
-                                                    break;
-                                            }
-
-                                            return false;
-                                        }
-                                    });
-                                tile.setOnClickListener(new View.OnClickListener() {
-
-                                        @Override
-                                        public void onClick(View view) {                                         
-                                            launchAppWithWindowsEffect(tile,
-                                                                       apps.get(i).activityInfo.packageName);
-                                        }
-                                    });
-                            }
-
-                            searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                                    @Override
-                                    public boolean onQueryTextSubmit(String query) { return false; }
-
-                                    @Override
-                                    public boolean onQueryTextChange(String newText) {
-                                        filterGrid(tileGrid, newText);
-                                        return true;
-                                    }
-                                });
-
-                        }
-                    }
-                }
-            });
-
+        orientationEventListener.enable();
     }
 
     @Override
@@ -322,6 +336,10 @@ public class MainActivity extends Activity {
         super.onPause();
         orientationEventListener.disable();
     }
+    
+    /* public void populateTiles() {
+        
+    } */
 
     private void launchAppWithWindowsEffect(final View clickedTile, final String packageName) {
         // 1. Configure the 3D perspective animation (Tilt from 0 to -25 degrees)
