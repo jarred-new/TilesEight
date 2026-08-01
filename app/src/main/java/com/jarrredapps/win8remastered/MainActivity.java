@@ -36,16 +36,19 @@ public class MainActivity extends Activity {
     private ImageView wallpaperView;
     private TextView title;
     private SearchView searchBar;
-    private OrientationEventListener orientationEventListener;
-    private int currentRotation = 0;
+    //private OrientationEventListener orientationEventListener;
+    //private int currentRotation = 0;
     private View tile;
 
+    private static List<ResolveInfo> cachedApps;
     private Intent launch;
     private ActivityOptions options;
 
     private int WALLPAPER_ACCESS_CODE = 200;
 
     boolean compatibilityCheck;
+    
+    Typeface segoer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +77,8 @@ public class MainActivity extends Activity {
                 AlertDialog dialog = new AlertDialog.Builder(this)
                     .setTitle("Before we start...")
                     .setMessage("Please grant the permission to access the wallpaper and other files...")
+                    .setCancelable(false)
+                    .setPositiveButton("Ok", null)
                     .create();
                 dialog.show();
 
@@ -100,6 +105,7 @@ public class MainActivity extends Activity {
 
         populateTiles();
 
+        /*
         orientationEventListener =
             new OrientationEventListener(this) {
 
@@ -172,41 +178,52 @@ public class MainActivity extends Activity {
             }
         };
 
-        orientationEventListener.enable();
+        orientationEventListener.enable(); */
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        orientationEventListener.enable();
+        //orientationEventListener.enable();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        orientationEventListener.enable();
+        //orientationEventListener.enable();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        orientationEventListener.disable();
+        //orientationEventListener.disable();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        orientationEventListener.disable();
+        //orientationEventListener.disable();
     }
 
     public void populateTiles() {     
-        Intent intent = new Intent(Intent.ACTION_MAIN, null);
-        intent.addCategory(Intent.CATEGORY_LAUNCHER);
-
+//        Intent intent = new Intent(Intent.ACTION_MAIN, null);
+//        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+//
+//        final PackageManager pm = getPackageManager();
+//
+//        final List<ResolveInfo> apps =
+//            pm.queryIntentActivities(intent, 0);
+    
         final PackageManager pm = getPackageManager();
 
-        final List<ResolveInfo> apps =
-            pm.queryIntentActivities(intent, 0);
+        if (cachedApps == null) {
+            Intent intent = new Intent(Intent.ACTION_MAIN, null);
+            intent.addCategory(Intent.CATEGORY_LAUNCHER);
+
+            cachedApps = pm.queryIntentActivities(intent, 0);
+        }
+
+        final List<ResolveInfo> apps = cachedApps;
 
         //tileGrid.setColumnCount(ccPortrait);
         //tileGrid.setRowCount(rcPortrait);
@@ -230,9 +247,7 @@ public class MainActivity extends Activity {
                                         tile.findViewById(R.id.appTitle);
 
                                     icon.setImageDrawable(app.loadIcon(pm));
-
-                                    Typeface segoer = Typeface.createFromAsset(getAssets(), 
-                                                                               "segoe_ui_regular.ttf");
+                                    
                                     appTitle.setTypeface(segoer);
                                     appTitle.setText(app.loadLabel(pm));                      
 
@@ -411,11 +426,12 @@ public class MainActivity extends Activity {
         }
     }
 
-    /*
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        
         int orientation =
-            getResources().getConfiguration().orientation;
+            newConfig.orientation;
 
         if (orientation ==
             Configuration.ORIENTATION_LANDSCAPE) {
@@ -428,7 +444,7 @@ public class MainActivity extends Activity {
             tileGrid.removeAllViews();
             populateTiles();
         }
-        super.onConfigurationChanged(newConfig);
+        
     }
-    */
+    
 }
