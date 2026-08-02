@@ -148,6 +148,7 @@ public class MainActivity extends Activity {
                     }
                 })
                 .setNegativeButton("Cancel", null)
+                .setCancelable(false)
                 .create();
             dialog.show();
         }
@@ -271,6 +272,34 @@ public class MainActivity extends Activity {
     protected void onPause() {
         super.onPause();
         //orientationEventListener.disable();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        CharSequence[] items = {"Settings", "About App", "Close Options"};
+        AlertDialog dialog = new AlertDialog.Builder(this)
+            .setTitle("Launcher Options")
+            .setItems(items, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dia, int which) {
+                    switch (which) {
+                        case 0:
+                            // TODO: Settings
+                            break;
+                        case 1:
+                            // TODO: About application
+                            break;
+                        case 2:
+                            dia.dismiss();
+                            break;
+                    }
+                }
+            })
+            .setCancelable(false)
+            .create();
+        dialog.show();
     }
 
     public void populateTiles() {     
