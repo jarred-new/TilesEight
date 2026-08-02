@@ -16,6 +16,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.Settings;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -117,6 +118,31 @@ public class MainActivity extends Activity {
                                    },
                                    WALLPAPER_ACCESS_CODE);
             }
+        }
+
+        if (LauncherUtils.isNotDefaultLauncher(this)) {
+            AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle("You've not set TilesEight as a default launcher")
+                .setMessage("Please set TilesEight as a default launcher to make it better...")
+                .setPositiveButton("Set Now", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dia, int which) {
+                        // Create intent to open the Home settings page directly
+                        Intent intent = new Intent(Settings.ACTION_HOME_SETTINGS);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                        // Check if there is an app that can handle this intent before launching
+                        if (intent.resolveActivity(getPackageManager()) != null) {
+                            startActivity(intent);
+                        } else {
+                            // Fallback to global settings if ACTION_HOME_SETTINGS is not supported
+                            startActivity(new Intent(Settings.ACTION_SETTINGS));
+                        }
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .create();
+            dialog.show();
         }
 
         int orientation = getResources().getConfiguration().orientation;
