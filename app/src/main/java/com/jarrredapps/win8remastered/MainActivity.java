@@ -140,6 +140,13 @@ public class MainActivity extends Activity {
                         }
                     }
                 })
+                .setNeutralButton("Quit App", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dia, int which) {
+                        finish();
+                        System.exit(0);
+                    }
+                })
                 .setNegativeButton("Cancel", null)
                 .create();
             dialog.show();
