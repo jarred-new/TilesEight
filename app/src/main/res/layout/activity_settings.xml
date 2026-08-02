@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:orientation="vertical"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
+
+	<Toolbar
+		android:layout_width="match_parent"
+		android:layout_height="50dp"
+		android:id="@+id/activity_settingsToolbar"/>
+
+	<ScrollView
+		android:layout_height="match_parent"
+		android:layout_width="match_parent">
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:orientation="vertical"
+			android:padding="7dp">
+
+			<TextView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="Launcher"
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:layout_marginBottom="6dp"/>
+
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal"
+				android:paddingLeft="14dp"
+				android:paddingRight="4dp"
+				android:paddingTop="4dp"
+				android:paddingBottom="4dp"
+				android:layout_marginBottom="10dp">
+
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="Show App Tile Icon"
+					android:textAppearance="?android:attr/textAppearanceLarge"
+					android:layout_gravity="left"/>
+
+				<Switch
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="right"
+					android:id="@+id/showAppIconSwitch"/>
+
+			</LinearLayout>
+
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal"
+				android:paddingLeft="14dp"
+				android:paddingRight="4dp"
+				android:paddingTop="4dp"
+				android:paddingBottom="4dp"
+				android:layout_marginBottom="10dp">
+
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="Show App Tile Name"
+					android:textAppearance="?android:attr/textAppearanceLarge"
+					android:layout_gravity="left"/>
+
+				<Switch
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="right"
+					android:id="@+id/showAppNameSwitch"/>
+
+			</LinearLayout>
+
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal"
+				android:paddingLeft="14dp"
+				android:paddingRight="4dp"
+				android:paddingTop="4dp"
+				android:paddingBottom="4dp"
+				android:layout_marginBottom="10dp">
+
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="Shadow on Search"
+					android:textAppearance="?android:attr/textAppearanceLarge"
+					android:layout_gravity="left"/>
+
+				<Switch
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="right"
+					android:id="@+id/shadowSearchSwitch"/>
+
+			</LinearLayout>
+
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal"
+				android:paddingLeft="14dp"
+				android:paddingRight="4dp"
+				android:paddingTop="4dp"
+				android:paddingBottom="4dp"
+				android:layout_marginBottom="10dp">
+
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="Progress on launch or rotate"
+					android:textAppearance="?android:attr/textAppearanceLarge"
+					android:layout_gravity="left"
+					android:ellipsize="marquee"/>
+
+				<Switch
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_gravity="right"
+					android:id="@+id/progressSwitch"/>
+
+			</LinearLayout>
+
+			<View
+				android:background="?android:attr/dividerVertical"
+				android:layout_width="match_parent"
+				android:layout_height="1dp"/>
+
+			<!--<TextView
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:text="Tiles Customization"
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:layout_marginTop="7dp"/>-->
+
+		</LinearLayout>
+
+	</ScrollView>
+
+</LinearLayout>
+

@@ -28,6 +28,7 @@ import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -287,9 +288,12 @@ public class MainActivity extends Activity {
                     switch (which) {
                         case 0:
                             // TODO: Settings
+                            //Toast.makeText(getApplication(), "Settings", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(MainActivity.this, LauncherSettingsActivity.class));
                             break;
                         case 1:
                             // TODO: About application
+                            Toast.makeText(getApplication(), "About App", Toast.LENGTH_SHORT).show();
                             break;
                         case 2:
                             dia.dismiss();

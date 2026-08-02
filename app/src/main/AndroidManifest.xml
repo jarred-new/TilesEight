@@ -34,11 +34,17 @@
             android:exported="true">
 
             <intent-filter>
+
                 <action android:name="android.intent.action.MAIN"/>
+
                 <category android:name="android.intent.category.LAUNCHER"/>
+
                 <category android:name="android.intent.category.HOME"/>
+
                 <category android:name="android.intent.category.DEFAULT"/>
+
             </intent-filter>
+
         </activity>
 
         <meta-data
@@ -46,6 +52,8 @@
             android:value="4.0"/>
 
         <activity android:name=".GlobalApplication$CrashActivity"/>
+
+        <activity android:name=".LauncherSettingsActivity"/>
 
     </application>
 
