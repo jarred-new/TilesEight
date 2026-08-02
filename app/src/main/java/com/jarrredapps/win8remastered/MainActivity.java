@@ -276,7 +276,7 @@ public class MainActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        //super.onBackPressed();
 
         CharSequence[] items = {"Settings", "About App", "Close Options"};
         AlertDialog dialog = new AlertDialog.Builder(this)
