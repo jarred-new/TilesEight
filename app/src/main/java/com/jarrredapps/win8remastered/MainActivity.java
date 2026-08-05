@@ -426,13 +426,21 @@ public class MainActivity extends Activity {
                                     appTitle.setText(app.loadLabel(pm));
                                     // Apply preferences: title visibility and icon visibility
                                     boolean showTitle;
-                                    if (startTextOnLs || startTextOnPt) {
+                                    if (!showTileNamePref) {
+                                        // global switch off -> hide titles
+                                        showTitle = false;
+                                    } else if (!startTextOnLs && !startTextOnPt) {
+                                        // both orientation-restrict switches off -> hide titles in both
+                                        showTitle = false;
+                                    } else if (startTextOnLs || startTextOnPt) {
+                                        // only show in selected orientations
                                         showTitle = (startTextOnLs && orientation == Configuration.ORIENTATION_LANDSCAPE)
                                             || (startTextOnPt && orientation == Configuration.ORIENTATION_PORTRAIT);
                                     } else {
-                                        showTitle = showTileNamePref;
+                                        // fallback: show by default
+                                        showTitle = true;
                                     }
-                                    appTitle.setVisibility(showTitle ? View.VISIBLE : View.INVISIBLE);
+                                    appTitle.setVisibility(showTitle ? View.VISIBLE : View.GONE);
                                     icon.setVisibility(showTileIconPref ? View.VISIBLE : View.GONE);
 
                                     GridLayout.LayoutParams params = new GridLayout.LayoutParams();
@@ -479,11 +487,15 @@ public class MainActivity extends Activity {
                                                 public boolean onTouch(View v, MotionEvent event) {
                                                     switch (event.getAction()) {
                                                         case MotionEvent.ACTION_DOWN:
+                                                            // clear any previous legacy animations to avoid ghosting
+                                                            v.clearAnimation();
+                                                            v.setLayerType(View.LAYER_TYPE_HARDWARE, null);
                                                             v.animate()
                                                                 .setDuration(200)
                                                                 .setInterpolator(new AccelerateInterpolator())
                                                                 .scaleX(0.8f)
                                                                 .scaleY(0.8f)
+                                                                .withLayer()
                                                                 .start();
                                                             break;
 
@@ -494,6 +506,13 @@ public class MainActivity extends Activity {
                                                                 .setInterpolator(new AccelerateInterpolator())
                                                                 .scaleX(1f)
                                                                 .scaleY(1f)
+                                                                .withLayer()
+                                                                .withEndAction(new Runnable() {
+                                                                    @Override
+                                                                    public void run() {
+                                                                        v.setLayerType(View.LAYER_TYPE_NONE, null);
+                                                                    }
+                                                                })
                                                                 .start();
                                                             break;
                                                     }
@@ -556,7 +575,9 @@ public class MainActivity extends Activity {
             .scaleY(0.92f)
             .alpha(0.9f)
             .start();
-
+        // clear any previous property animations and legacy animations to avoid double-drawing
+        clickedTile.clearAnimation();
+        clickedTile.setLayerType(View.LAYER_TYPE_HARDWARE, null);
         clickedTile.startAnimation(tiltAnim);
 
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
@@ -578,11 +599,17 @@ public class MainActivity extends Activity {
                             public void run() {
                                 clickedTile.clearAnimation();
                                 clickedTile.animate()
-                                    .setDuration(140)
+                                    .setDuration(200)
                                     .setInterpolator(new DecelerateInterpolator())
                                     .scaleX(1f)
                                     .scaleY(1f)
                                     .alpha(1f)
+                                    .withEndAction(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            clickedTile.setLayerType(View.LAYER_TYPE_NONE, null);
+                                        }
+                                    })
                                     .start();
                             }
                         }, 180);
