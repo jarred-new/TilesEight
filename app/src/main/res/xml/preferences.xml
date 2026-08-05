@@ -20,7 +20,7 @@
             android:defaultValue="false"/>
         
         <SwitchPreference
-            android:key="showtilename"
+            android:key="shadowsearchbar"
             android:title="Shadow on Search Bar" 
             android:summary="Makes shadows on the search bar if you don't see it clearly"
             android:defaultValue="true"/>

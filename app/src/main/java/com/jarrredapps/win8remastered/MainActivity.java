@@ -20,6 +20,9 @@ import android.provider.Settings;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.app.ProgressDialog;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.GridLayout;
@@ -82,6 +85,9 @@ public class MainActivity extends Activity {
         searchBar = findViewById(R.id.searchBar);
         scrollView = findViewById(R.id.scrollView);
         tileGrid = findViewById(R.id.tileGrid);
+
+        // Apply preferences for UI elements (search bar shadow etc.)
+        applyPreferences();
 
         Typeface segoe = Typeface.createFromAsset(getAssets(),
                                                   "segoe_ui_light.ttf");
@@ -254,13 +260,15 @@ public class MainActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
-        //orientationEventListener.enable();
+        applyPreferences();
+        populateTiles();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        //orientationEventListener.enable();
+        applyPreferences();
+        populateTiles();
     }
 
     @Override
@@ -369,6 +377,31 @@ public class MainActivity extends Activity {
             tileSizePx = Math.min(maxTile, computed);
         }
 
+        // Read user preferences and compute final tile size and visibility rules
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        final boolean showTileNamePref = prefs.getBoolean("showtilename", true);
+        final boolean showTileIconPref = prefs.getBoolean("showtileicon", true);
+        final boolean startTextOnLs = prefs.getBoolean("starttextonls", true);
+        final boolean startTextOnPt = prefs.getBoolean("starttextonpt", false);
+        final int tilePortraitIdx = prefs.getInt("tileSize_portrait", 0);
+        final int tileLandscapeIdx = prefs.getInt("tileSize_landscape", 0);
+        final boolean showProgDlg = prefs.getBoolean("showprogdlg", false);
+
+        int maxTileForClamp = getResources().getDimensionPixelSize(R.dimen.tile_size);
+        int userIdx = (orientation == Configuration.ORIENTATION_LANDSCAPE) ? tileLandscapeIdx : tilePortraitIdx;
+        int adjustedTileSize;
+        switch (userIdx) {
+            case 1: adjustedTileSize = Math.max(48, (tileSizePx * 9) / 10); break;
+            case 2: adjustedTileSize = Math.min(maxTileForClamp, (tileSizePx * 11) / 10); break;
+            case 3: adjustedTileSize = Math.max(48, (tileSizePx * 3) / 4); break;
+            case 4: adjustedTileSize = Math.max(48, (tileSizePx * 19) / 20); break;
+            default: adjustedTileSize = tileSizePx; break;
+        }
+        final int finalTileSizePx = Math.max(48, Math.min(maxTileForClamp, adjustedTileSize));
+
+        // show progress dialog if requested
+        final ProgressDialog pd = showProgDlg ? ProgressDialog.show(this, "", "Loading tiles...", true, false) : null;
+
         new Thread(new Runnable(){
                 @Override
                 public void run() {
@@ -391,6 +424,16 @@ public class MainActivity extends Activity {
                                     icon.setImageDrawable(app.loadIcon(pm));
                                     appTitle.setTypeface(segoer);
                                     appTitle.setText(app.loadLabel(pm));
+                                    // Apply preferences: title visibility and icon visibility
+                                    boolean showTitle;
+                                    if (startTextOnLs || startTextOnPt) {
+                                        showTitle = (startTextOnLs && orientation == Configuration.ORIENTATION_LANDSCAPE)
+                                            || (startTextOnPt && orientation == Configuration.ORIENTATION_PORTRAIT);
+                                    } else {
+                                        showTitle = showTileNamePref;
+                                    }
+                                    appTitle.setVisibility(showTitle ? View.VISIBLE : View.INVISIBLE);
+                                    icon.setVisibility(showTileIconPref ? View.VISIBLE : View.GONE);
 
                                     GridLayout.LayoutParams params = new GridLayout.LayoutParams();
                                     if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -400,7 +443,7 @@ public class MainActivity extends Activity {
                                         params.rowSpec = GridLayout.spec(index / columns, 1);
                                         params.columnSpec = GridLayout.spec(index % columns, 1);
                                     }
-                                    int tileSize = tileSizePx;
+                                    int tileSize = finalTileSizePx;
                                     params.width = tileSize;
                                     params.height = tileSize;
                                     params.setMargins(
@@ -466,7 +509,7 @@ public class MainActivity extends Activity {
                                             });
                                     }
                                 }
-
+                                
                                 searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                                         @Override
                                         public boolean onQueryTextSubmit(String query) { return false; }
@@ -477,11 +520,28 @@ public class MainActivity extends Activity {
                                             return true;
                                         }
                                     });
+                                if (pd != null && pd.isShowing()) pd.dismiss();
                             }
                         });
                 }
             }).start();
     } 
+
+        // Apply preferences to UI elements; callable from lifecycle methods
+        private void applyPreferences() {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            boolean showSearchShadow = prefs.getBoolean("shadowsearchbar", true);
+            if (searchBar != null) {
+                if (showSearchShadow && Build.VERSION.SDK_INT >= 21) {
+                    float elev = getResources().getDisplayMetrics().density * 4; // ~4dp
+                    searchBar.setElevation(elev);
+                    searchBar.setTranslationZ(elev);
+                } else if (Build.VERSION.SDK_INT >= 21) {
+                    searchBar.setElevation(0);
+                    searchBar.setTranslationZ(0);
+                }
+            }
+        }
 
     private void launchAppWithWindowsEffect(final View clickedTile, final String packageName) {
         WindowsPerspectiveAnimation tiltAnim = new WindowsPerspectiveAnimation(0f, -22f);
