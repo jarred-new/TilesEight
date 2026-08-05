@@ -50,17 +50,6 @@
             android:negativeButtonText="Cancel"/>
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Tile Colors">
-        <!-- TODO: Add color preference options here -->
-        <com.jarrredapps.win8remastered.TileColorDialog
-            android:key="tileColor"
-            android:title="Change Tile Color"
-            android:summary="Click here to open the tile color editor"
-            android:dialogTitle="Tile Color Editor"
-            android:dialogLayout="@layout/tile_color_editor"
-            android:positiveButtonText="Save"
-            android:negativeButtonText="Cancel"/>
-    </PreferenceCategory>
 
 </PreferenceScreen>
 
