@@ -425,22 +425,43 @@ public class MainActivity extends Activity {
                                     appTitle.setTypeface(segoer);
                                     appTitle.setText(app.loadLabel(pm));
                                     // Apply preferences: title visibility and icon visibility
-                                    boolean showTitle;
+                                    boolean showTileText;
+                                    //boolean showStartTitlePt;
+                                    //boolean showStartTitleLs;
                                     if (!showTileNamePref) {
                                         // global switch off -> hide titles
-                                        showTitle = false;
-                                    } else if (!startTextOnLs && !startTextOnPt) {
-                                        // both orientation-restrict switches off -> hide titles in both
-                                        showTitle = false;
-                                    } else if (startTextOnLs || startTextOnPt) {
-                                        // only show in selected orientations
-                                        showTitle = (startTextOnLs && orientation == Configuration.ORIENTATION_LANDSCAPE)
-                                            || (startTextOnPt && orientation == Configuration.ORIENTATION_PORTRAIT);
-                                    } else {
+                                        showTileText = false;
+                                    }                                  
+                                    else {
                                         // fallback: show by default
-                                        showTitle = true;
+                                        showTileText = true;
                                     }
-                                    appTitle.setVisibility(showTitle ? View.VISIBLE : View.GONE);
+                                    
+                                    if (!startTextOnLs && orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                                        // both orientation-restrict switches off -> hide titles in both
+                                        //showStartTitleLs = false;
+                                        title.setVisibility(View.INVISIBLE);
+                                    } 
+                                    else {
+                                        //showStartTitleLs = true;
+                                        title.setVisibility(View.VISIBLE);
+                                    }
+                                    
+                                    if (!startTextOnPt && orientation == Configuration.ORIENTATION_PORTRAIT) {
+                                        //showStartTitlePt = false;
+                                        title.setVisibility(View.INVISIBLE);
+                                    }
+                                    else {
+                                        //showStartTitlePt = true;
+                                        title.setVisibility(View.VISIBLE);
+                                    }
+                                    
+//                                    if (startTextOnLs || startTextOnPt) {
+//                                        // only show in selected orientations
+//                                        showTitle = (startTextOnLs && orientation == Configuration.ORIENTATION_LANDSCAPE)
+//                                            || (startTextOnPt && orientation == Configuration.ORIENTATION_PORTRAIT);
+//                                    } 
+                                    appTitle.setVisibility(showTileText ? View.VISIBLE : View.GONE);
                                     icon.setVisibility(showTileIconPref ? View.VISIBLE : View.GONE);
 
                                     GridLayout.LayoutParams params = new GridLayout.LayoutParams();
@@ -484,7 +505,7 @@ public class MainActivity extends Activity {
                                     } else {
                                         tileView.setOnTouchListener(new View.OnTouchListener() {
                                                 @Override
-                                                public boolean onTouch(View v, MotionEvent event) {
+                                                public boolean onTouch(final View v, MotionEvent event) {
                                                     switch (event.getAction()) {
                                                         case MotionEvent.ACTION_DOWN:
                                                             // clear any previous legacy animations to avoid ghosting
