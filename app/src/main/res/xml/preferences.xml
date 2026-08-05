@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="Launcher Settings">
+
+        <!-- Use CheckBoxPreference; SwitchPreference requires API 14+ -->
+        <SwitchPreference
+            android:key="showtilename"
+            android:title="Show App's Tile Name"         
+            android:defaultValue="true"/> 
+        
+        <SwitchPreference
+            android:key="showtileicon"
+            android:title="Show App's Tile Icon"         
+            android:defaultValue="true"/>
+        
+        <SwitchPreference
+            android:key="showprogdlg"
+            android:title="Show Progress Dialog on Create/Rotate"         
+            android:defaultValue="false"/>
+        
+        <SwitchPreference
+            android:key="showtilename"
+            android:title="Shadow on Search Bar" 
+            android:summary="Makes shadows on the search bar if you don't see it clearly"
+            android:defaultValue="true"/>
+              
+    </PreferenceCategory>
+    
+    <PreferenceCategory android:title="Orientation Change">
+        <SwitchPreference
+            android:key="starttextonls"
+            android:title="Start text only in Landscape" 
+            android:summary="Make landscape more look like Windows 8/8.1 Start Screen."
+            android:defaultValue="true"/>
+        
+        <SwitchPreference
+            android:key="starttextonpt"
+            android:title="Start text only in Portrait" 
+            android:summary="Make Portrait looks like an extended version of a Windows Phone."
+            android:defaultValue="false"/>
+        
+        <com.jarrredapps.win8remastered.TileSizeDialog
+            android:key="tileSize"
+            android:title="Change Tile Size"
+            android:summary="Click here to open the tile size editor"
+            android:dialogTitle="Tile Size Editor"
+            android:dialogLayout="@layout/tile_size_editor"
+            android:positiveButtonText="Save"
+            android:negativeButtonText="Cancel"/>
+        
+    </PreferenceCategory>
+    
+
+</PreferenceScreen>
+

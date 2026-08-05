@@ -289,7 +289,7 @@ public class MainActivity extends Activity {
                         case 0:
                             // TODO: Settings
                             //Toast.makeText(getApplication(), "Settings", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(MainActivity.this, LauncherSettingsActivity.class));
+                            startActivity(new Intent(MainActivity.this, SettingsActivity.class));
                             break;
                         case 1:
                             // TODO: About application

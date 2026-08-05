@@ -51,9 +51,12 @@
             android:name="android.max_aspect"
             android:value="4.0"/>
 
-        <activity android:name=".GlobalApplication$CrashActivity"/>
+        <activity android:name=".GlobalApplication$CrashActivity"
+            android:exported="true"/>
 
-        <activity android:name=".LauncherSettingsActivity"/>
+        <activity android:name=".SettingsActivity"
+            android:theme="@android:style/Theme.DeviceDefault.Settings"
+            android:exported="true"/>
 
     </application>
 
