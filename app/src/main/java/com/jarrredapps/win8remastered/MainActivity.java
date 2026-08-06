@@ -528,7 +528,7 @@ public class MainActivity extends Activity {
                                     tileGrid.addView(tileView);
 
                                     if (compatibilityCheck) {
-                                        Intent launch = pm.getLaunchIntentForPackage(apps.get(position).activityInfo.packageName);
+                                        final Intent launch = pm.getLaunchIntentForPackage(apps.get(position).activityInfo.packageName);
                                         final ActivityOptions opts = ActivityOptions.makeCustomAnimation(
                                             MainActivity.this, R.anim.pers_enter, R.anim.pers_exit);
                                         tileView.setOnClickListener(new OnClickListener() {
