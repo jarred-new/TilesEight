@@ -450,66 +450,56 @@ public class MainActivity extends Activity {
         // show progress dialog if requested
         final ProgressDialog pd = showProgDlg ? ProgressDialog.show(this, "", "Loading tiles...", true, false) : null;
 
-        for (int index = 0; index < apps.size(); index++) {
-                                    final ResolveInfo app = apps.get(index);
+        final Handler handler = new Handler(Looper.getMainLooper());
 
+        new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    for (int index = 0; index < apps.size(); index++) {
+                        final ResolveInfo app = apps.get(index);
+                        // Load icon and label off the UI thread where possible
+                        final Drawable appIcon = app.loadIcon(pm);
+                        final CharSequence appLabel = app.loadLabel(pm);
+                        final int position = index;
+
+                        handler.post(new Runnable() {
+                                @Override
+                                public void run() {
                                     final View tileView = getLayoutInflater()
                                         .inflate(R.layout.tile, tileGrid, false);
 
-                                    final ImageView icon =
-                                        tileView.findViewById(R.id.icon);
+                                    final ImageView icon = tileView.findViewById(R.id.icon);
+                                    final TextView appTitle = tileView.findViewById(R.id.appTitle);
 
-                                    final TextView appTitle =
-                                        tileView.findViewById(R.id.appTitle);
-
-                                    icon.setImageDrawable(app.loadIcon(pm));
+                                    icon.setImageDrawable(appIcon);
                                     appTitle.setTypeface(segoer);
-                                    appTitle.setText(app.loadLabel(pm));
-                                    // Apply preferences: title visibility and icon visibility
-                                    boolean showTileText;
-                                    //boolean showStartTitlePt;
-                                    //boolean showStartTitleLs;
-                                    if (!showTileNamePref) {
-                                        // global switch off -> hide titles
-                                        showTileText = false;
-                                    } else {
-                                        // fallback: show by default
-                                        showTileText = true;
-                                    }
+                                    appTitle.setText(appLabel);
+
+                                    boolean showTileText = showTileNamePref;
 
                                     if (!startTextOnLs && orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                                        // both orientation-restrict switches off -> hide titles in both
-                                        //showStartTitleLs = false;
                                         title.setVisibility(View.INVISIBLE);
                                     } else {
-                                        //showStartTitleLs = true;
                                         title.setVisibility(View.VISIBLE);
                                     }
 
                                     if (!startTextOnPt && orientation == Configuration.ORIENTATION_PORTRAIT) {
-                                        //showStartTitlePt = false;
                                         title.setVisibility(View.INVISIBLE);
                                     } else {
-                                        //showStartTitlePt = true;
                                         title.setVisibility(View.VISIBLE);
                                     }
 
-//                                    if (startTextOnLs || startTextOnPt) {
-//                                        // only show in selected orientations
-//                                        showTitle = (startTextOnLs && orientation == Configuration.ORIENTATION_LANDSCAPE)
-//                                            || (startTextOnPt && orientation == Configuration.ORIENTATION_PORTRAIT);
-//                                    } 
                                     appTitle.setVisibility(showTileText ? View.VISIBLE : View.GONE);
                                     icon.setVisibility(showTileIconPref ? View.VISIBLE : View.GONE);
                                     icon.setWillNotCacheDrawing(cacheDrawing);
 
                                     GridLayout.LayoutParams params = new GridLayout.LayoutParams();
                                     if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                                        params.rowSpec = GridLayout.spec(index % rows, 1);
-                                        params.columnSpec = GridLayout.spec(index / rows, 1);
+                                        params.rowSpec = GridLayout.spec(position % rows, 1);
+                                        params.columnSpec = GridLayout.spec(position / rows, 1);
                                     } else {
-                                        params.rowSpec = GridLayout.spec(index / columns, 1);
-                                        params.columnSpec = GridLayout.spec(index % columns, 1);
+                                        params.rowSpec = GridLayout.spec(position / columns, 1);
+                                        params.columnSpec = GridLayout.spec(position % columns, 1);
                                     }
                                     int tileSize = finalTileSizePx;
                                     params.width = tileSize;
@@ -523,22 +513,14 @@ public class MainActivity extends Activity {
                                     tileView.setLayoutParams(params);
                                     tileGrid.addView(tileView);
 
-                                    final int position = index;
                                     if (compatibilityCheck) {
-                                        launch =
-                                            pm.getLaunchIntentForPackage(
-                                            apps.get(position).activityInfo.packageName);
-
-                                        options = ActivityOptions.makeCustomAnimation(
-                                            MainActivity.this,
-                                            R.anim.pers_enter,
-                                            R.anim.pers_exit
-                                        );
-
+                                        Intent launch = pm.getLaunchIntentForPackage(apps.get(position).activityInfo.packageName);
+                                        final ActivityOptions opts = ActivityOptions.makeCustomAnimation(
+                                            MainActivity.this, R.anim.pers_enter, R.anim.pers_exit);
                                         tileView.setOnClickListener(new OnClickListener() {
                                                 @Override
                                                 public void onClick(View v) {
-                                                    startActivity(launch, options.toBundle());
+                                                    startActivity(launch, opts.toBundle());
                                                 }
                                             });
                                     } else {
@@ -547,7 +529,6 @@ public class MainActivity extends Activity {
                                                 public boolean onTouch(final View v, MotionEvent event) {
                                                     switch (event.getAction()) {
                                                         case MotionEvent.ACTION_DOWN:
-                                                            // clear any previous legacy animations to avoid ghosting
                                                             v.clearAnimation();
                                                             v.setLayerType(View.LAYER_TYPE_HARDWARE, null);
                                                             v.animate()
@@ -587,7 +568,26 @@ public class MainActivity extends Activity {
                                                 }
                                             });
                                     }
-        }
+                                }
+                            });
+
+                        try {
+                            Thread.sleep(8);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
+                    }
+
+                    if (pd != null) {
+                        handler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (pd.isShowing()) pd.dismiss();
+                                }
+                            });
+                    }
+                }
+            }).start();
 
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
@@ -599,7 +599,6 @@ public class MainActivity extends Activity {
                     return true;
                 }
             });
-        if (pd != null && pd.isShowing()) pd.dismiss();
     } 
 
     // Apply preferences to UI elements; callable from lifecycle methods
