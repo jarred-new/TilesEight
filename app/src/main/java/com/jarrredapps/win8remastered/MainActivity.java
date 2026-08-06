@@ -91,9 +91,9 @@ public class MainActivity extends Activity {
         // Apply preferences for UI elements (search bar shadow etc.)
         applyPreferences();
 
-        Typeface segoe = Typeface.createFromAsset(getAssets(),
-                                                  "segoe_ui_light.ttf");
-        title.setTypeface(segoe);
+        segoer = Typeface.createFromAsset(getAssets(),
+                                           "segoe_ui_light.ttf");
+        title.setTypeface(segoer);
 
         if (Build.VERSION.SDK_INT >= 33) {
             if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -450,14 +450,7 @@ public class MainActivity extends Activity {
         // show progress dialog if requested
         final ProgressDialog pd = showProgDlg ? ProgressDialog.show(this, "", "Loading tiles...", true, false) : null;
 
-        new Thread(new Runnable(){
-                @Override
-                public void run() {
-                    Handler handler = new Handler(Looper.getMainLooper());
-                    handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                for (int index = 0; index < apps.size(); index++) {
+        for (int index = 0; index < apps.size(); index++) {
                                     final ResolveInfo app = apps.get(index);
 
                                     final View tileView = getLayoutInflater()
@@ -594,23 +587,19 @@ public class MainActivity extends Activity {
                                                 }
                                             });
                                     }
-                                }
+        }
 
-                                searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                                        @Override
-                                        public boolean onQueryTextSubmit(String query) { return false; }
+        searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String query) { return false; }
 
-                                        @Override
-                                        public boolean onQueryTextChange(String newText) {
-                                            filterGrid(tileGrid, newText);
-                                            return true;
-                                        }
-                                    });
-                                if (pd != null && pd.isShowing()) pd.dismiss();
-                            }
-                        });
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    filterGrid(tileGrid, newText);
+                    return true;
                 }
-            }).start();
+            });
+        if (pd != null && pd.isShowing()) pd.dismiss();
     } 
 
     // Apply preferences to UI elements; callable from lifecycle methods
