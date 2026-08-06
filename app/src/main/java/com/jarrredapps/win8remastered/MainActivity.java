@@ -59,10 +59,6 @@ public class MainActivity extends Activity {
     private int WALLPAPER_ACCESS_CODE = 200;
 
     private final AtomicInteger populateGen = new AtomicInteger(0);
-<<<<<<< HEAD
-=======
-    private ProgressDialog progressDialog = null;
->>>>>>> origin/main
 
     boolean compatibilityCheck;
 
@@ -454,44 +450,19 @@ public class MainActivity extends Activity {
         }
         final int finalTileSizePx = Math.max(48, Math.min(maxTileForClamp, adjustedTileSize));
 
-<<<<<<< HEAD
         // show progress dialog if requested
         //final ProgressDialog pd = showProgDlg ? ProgressDialog.show(this, "", "Loading tiles...", true, false) : null;
-=======
-        // show progress dialog if requested (use field so we can dismiss from any run)
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.dismiss();
-            progressDialog = null;
-        }
-        progressDialog = showProgDlg ? ProgressDialog.show(this, "", "Loading tiles...", true, false) : null;
->>>>>>> origin/main
 
         final Handler handler = new Handler(Looper.getMainLooper());
 
         final int runGen = populateGen.incrementAndGet();
-<<<<<<< HEAD
-=======
-        final Runnable dismissRunnable = new Runnable() {
-                @Override
-                public void run() {
-                    if (progressDialog != null && progressDialog.isShowing()) {
-                        progressDialog.dismiss();
-                        progressDialog = null;
-                    }
-                }
-            };
->>>>>>> origin/main
 
         new Thread(new Runnable() {
                 @Override
                 public void run() {
                     for (int index = 0; index < apps.size(); index++) {
                         // If a newer populate run has started, abort this run
-<<<<<<< HEAD
                         if (runGen != populateGen.get()) return;
-=======
-                        if (runGen != populateGen.get()) { handler.post(dismissRunnable); return; }
->>>>>>> origin/main
 
                         final ResolveInfo app = apps.get(index);
                         // Load icon and label off the UI thread where possible
@@ -500,21 +471,13 @@ public class MainActivity extends Activity {
                         final int position = index;
 
                         // Before posting, check again to avoid posting stale tasks
-<<<<<<< HEAD
                         if (runGen != populateGen.get()) return;
-=======
-                        if (runGen != populateGen.get()) { handler.post(dismissRunnable); return; }
->>>>>>> origin/main
 
                         handler.post(new Runnable() {
                                 @Override
                                 public void run() {
                                     // If a newer run started while this task was queued, skip
-<<<<<<< HEAD
                                     if (runGen != populateGen.get()) return;
-=======
-                                    if (runGen != populateGen.get()) { handler.post(dismissRunnable); return; }
->>>>>>> origin/main
 
                                     final View tileView = getLayoutInflater()
                                         .inflate(R.layout.tile, tileGrid, false);
@@ -629,7 +592,6 @@ public class MainActivity extends Activity {
                         }
                     }
 
-<<<<<<< HEAD
                     /*
                     if (pd != null) {
                         handler.post(new Runnable() {
@@ -639,9 +601,6 @@ public class MainActivity extends Activity {
                                 }
                             });
                     } */
-=======
-                    handler.post(dismissRunnable);
->>>>>>> origin/main
                 }
             }).start();
 
