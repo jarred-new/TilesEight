@@ -18,6 +18,9 @@
     <!-- adjust your wallpaper size -->
     <uses-permission android:name="android.permission.SET_WALLPAPER_HINTS"/>
 
+    <!-- have full network access -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
@@ -51,10 +54,12 @@
             android:name="android.max_aspect"
             android:value="4.0"/>
 
-        <activity android:name=".GlobalApplication$CrashActivity"
+        <activity
+            android:name=".GlobalApplication$CrashActivity"
             android:exported="true"/>
 
-        <activity android:name=".SettingsActivity"
+        <activity
+            android:name=".SettingsActivity"
             android:theme="@android:style/Theme.DeviceDefault.Settings"
             android:exported="true"/>
 

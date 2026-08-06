@@ -1,11 +1,13 @@
 package com.jarrredapps.win8remastered;
 
+import android.app.role.RoleManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.os.Build;
-import android.app.role.RoleManager;
+import android.widget.Toast;
 
 public class LauncherUtils {
 
@@ -44,5 +46,22 @@ public class LauncherUtils {
 
         // Fallback if no default handler is found or if it's the Android system resolver (chooser)
         return true; 
+    }
+
+    /**
+     * Opens the website using a browser
+     * This will use the external browser.
+     */
+    public static void openLink(Context context, String url) {     
+        // 1. Create the Intent with ACTION_VIEW and parse the URL string
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+
+        // 2. Prevent crashes by checking if there is a browser app to handle the intent
+        if (browserIntent.resolveActivity(context.getPackageManager()) != null) {
+            context.startActivity(browserIntent);
+        } else {
+            // Optional: Fallback if no browser is installed on the device
+            Toast.makeText(context, "No web browser installed", Toast.LENGTH_LONG).show();
+        }
     }
 }

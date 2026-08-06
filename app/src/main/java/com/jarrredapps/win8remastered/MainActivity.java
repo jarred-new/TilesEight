@@ -34,6 +34,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
+import android.widget.LinearLayout;
+import android.view.ViewGroup;
 
 public class MainActivity extends Activity {
     public static final int ccLandscape = 5;
@@ -100,7 +102,7 @@ public class MainActivity extends Activity {
                 == PackageManager.PERMISSION_DENIED) {
                 AlertDialog dialog = new AlertDialog.Builder(this)
                     .setTitle("Before we start...")
-                    .setMessage("Please grant the permission to access the wallpaper and other files. After that, click ok to restart the app to set the app's wallpaper to the system wallpaper")
+                    .setMessage("Please grant the permission to access the wallpaper and other files. After that, click OK to restart the app to set the app's wallpaper to the system wallpaper")
                     .setCancelable(false)
                     .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         @Override
@@ -160,18 +162,23 @@ public class MainActivity extends Activity {
             dialog.show();
         }
 
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        final boolean scrollVPt = prefs.getBoolean("scrollVPt", false);
+        final boolean scrollHLs = prefs.getBoolean("scrollHLs", false);
+        
         int orientation = getResources().getConfiguration().orientation;
+        
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
             tileGrid.setColumnCount(ccLandscape);
             if (scrollView instanceof HorizontalScrollView) {
-                ((HorizontalScrollView) scrollView).setHorizontalScrollBarEnabled(false);
+                ((HorizontalScrollView) scrollView).setHorizontalScrollBarEnabled(scrollHLs);
                 ((HorizontalScrollView) scrollView).setVerticalScrollBarEnabled(false);
             }
         } else {
             tileGrid.setColumnCount(ccPortrait);
             if (scrollView instanceof ScrollView) {
                 ((ScrollView) scrollView).setHorizontalScrollBarEnabled(false);
-                ((ScrollView) scrollView).setVerticalScrollBarEnabled(false);
+                ((ScrollView) scrollView).setVerticalScrollBarEnabled(scrollVPt);
             }
         }
 
@@ -301,7 +308,47 @@ public class MainActivity extends Activity {
                             break;
                         case 1:
                             // TODO: About application
-                            Toast.makeText(getApplication(), "About App", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(getApplication(), "About App", Toast.LENGTH_SHORT).show();
+                            /*
+                             final int dlgPadding = 9;
+                             final LinearLayout dlgLayout = new LinearLayout(MainActivity.this);
+                             final ImageView img = new ImageView(MainActivity.this);
+                             final TextView aboutText = new TextView(MainActivity.this);                         
+
+                             dlgLayout.setPadding(dlgPadding, dlgPadding, dlgPadding, dlgPadding);
+                             img.setImageResource(R.drawable.aboutimg);
+                             img.setScaleType(ImageView.ScaleType.FIT_XY);
+
+                             ViewGroup.LayoutParams imgParams = img.getLayoutParams();
+                             imgParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                             imgParams.height = 150;
+                             img.setLayoutParams(imgParams);
+
+                             img.setWillNotCacheDrawing(true);
+
+                             aboutText.setText("Version: 1.0\nCreated by: Jarred\n\nIf you like this app, give a star on my GitHub Repo!");
+                             aboutText.setSingleLine(false);
+                             aboutText.setScrollbarFadingEnabled(true);                          
+                             aboutText.setScrollIndicators(View.SCROLL_AXIS_VERTICAL);                   
+
+                             dlgLayout.addView(img, 0);
+                             dlgLayout.addView(aboutText, 1);
+                             */
+                            AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
+                                .setTitle("About App")                              
+                                .setView(R.layout.aboutappview)
+                                .setPositiveButton("Ok", null)
+                                .setNeutralButton("Give it a Star!", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dia, int which) {
+                                        LauncherUtils.openLink(
+                                            MainActivity.this, 
+                                            "https://github.com/jarred-new/TilesEight"
+                                        );
+                                    }
+                                })
+                                .create();
+                            dialog.show();
                             break;
                         case 2:
                             dia.dismiss();
@@ -386,6 +433,7 @@ public class MainActivity extends Activity {
         final int tilePortraitIdx = prefs.getInt("tileSize_portrait", 0);
         final int tileLandscapeIdx = prefs.getInt("tileSize_landscape", 0);
         final boolean showProgDlg = prefs.getBoolean("showprogdlg", false);
+        final boolean cacheDrawing = prefs.getBoolean("cacheDrawing", false);     
 
         int maxTileForClamp = getResources().getDimensionPixelSize(R.dimen.tile_size);
         int userIdx = (orientation == Configuration.ORIENTATION_LANDSCAPE) ? tileLandscapeIdx : tilePortraitIdx;
@@ -431,31 +479,28 @@ public class MainActivity extends Activity {
                                     if (!showTileNamePref) {
                                         // global switch off -> hide titles
                                         showTileText = false;
-                                    }                                  
-                                    else {
+                                    } else {
                                         // fallback: show by default
                                         showTileText = true;
                                     }
-                                    
+
                                     if (!startTextOnLs && orientation == Configuration.ORIENTATION_LANDSCAPE) {
                                         // both orientation-restrict switches off -> hide titles in both
                                         //showStartTitleLs = false;
                                         title.setVisibility(View.INVISIBLE);
-                                    } 
-                                    else {
+                                    } else {
                                         //showStartTitleLs = true;
                                         title.setVisibility(View.VISIBLE);
                                     }
-                                    
+
                                     if (!startTextOnPt && orientation == Configuration.ORIENTATION_PORTRAIT) {
                                         //showStartTitlePt = false;
                                         title.setVisibility(View.INVISIBLE);
-                                    }
-                                    else {
+                                    } else {
                                         //showStartTitlePt = true;
                                         title.setVisibility(View.VISIBLE);
                                     }
-                                    
+
 //                                    if (startTextOnLs || startTextOnPt) {
 //                                        // only show in selected orientations
 //                                        showTitle = (startTextOnLs && orientation == Configuration.ORIENTATION_LANDSCAPE)
@@ -463,6 +508,7 @@ public class MainActivity extends Activity {
 //                                    } 
                                     appTitle.setVisibility(showTileText ? View.VISIBLE : View.GONE);
                                     icon.setVisibility(showTileIconPref ? View.VISIBLE : View.GONE);
+                                    icon.setWillNotCacheDrawing(cacheDrawing);
 
                                     GridLayout.LayoutParams params = new GridLayout.LayoutParams();
                                     if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -549,7 +595,7 @@ public class MainActivity extends Activity {
                                             });
                                     }
                                 }
-                                
+
                                 searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                                         @Override
                                         public boolean onQueryTextSubmit(String query) { return false; }
@@ -567,21 +613,21 @@ public class MainActivity extends Activity {
             }).start();
     } 
 
-        // Apply preferences to UI elements; callable from lifecycle methods
-        private void applyPreferences() {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            boolean showSearchShadow = prefs.getBoolean("shadowsearchbar", true);
-            if (searchBar != null) {
-                if (showSearchShadow && Build.VERSION.SDK_INT >= 21) {
-                    float elev = getResources().getDisplayMetrics().density * 4; // ~4dp
-                    searchBar.setElevation(elev);
-                    searchBar.setTranslationZ(elev);
-                } else if (Build.VERSION.SDK_INT >= 21) {
-                    searchBar.setElevation(0);
-                    searchBar.setTranslationZ(0);
-                }
+    // Apply preferences to UI elements; callable from lifecycle methods
+    private void applyPreferences() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean showSearchShadow = prefs.getBoolean("shadowsearchbar", true);
+        if (searchBar != null) {
+            if (showSearchShadow && Build.VERSION.SDK_INT >= 21) {
+                float elev = getResources().getDisplayMetrics().density * 4; // ~4dp
+                searchBar.setElevation(elev);
+                searchBar.setTranslationZ(elev);
+            } else if (Build.VERSION.SDK_INT >= 21) {
+                searchBar.setElevation(0);
+                searchBar.setTranslationZ(0);
             }
         }
+    }
 
     private void launchAppWithWindowsEffect(final View clickedTile, final String packageName) {
         WindowsPerspectiveAnimation tiltAnim = new WindowsPerspectiveAnimation(0f, -22f);
