@@ -22,7 +22,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.app.ProgressDialog;
+//import android.app.ProgressDialog;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.GridLayout;
@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import android.widget.LinearLayout;
 import android.view.ViewGroup;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class MainActivity extends Activity {
     public static final int ccLandscape = 5;
@@ -56,6 +57,8 @@ public class MainActivity extends Activity {
     private ActivityOptions options;
 
     private int WALLPAPER_ACCESS_CODE = 200;
+
+    private final AtomicInteger populateGen = new AtomicInteger(0);
 
     boolean compatibilityCheck;
 
@@ -432,7 +435,7 @@ public class MainActivity extends Activity {
         final boolean startTextOnPt = prefs.getBoolean("starttextonpt", false);
         final int tilePortraitIdx = prefs.getInt("tileSize_portrait", 0);
         final int tileLandscapeIdx = prefs.getInt("tileSize_landscape", 0);
-        final boolean showProgDlg = prefs.getBoolean("showprogdlg", false);
+        //final boolean showProgDlg = prefs.getBoolean("showprogdlg", false);
         final boolean cacheDrawing = prefs.getBoolean("cacheDrawing", false);     
 
         int maxTileForClamp = getResources().getDimensionPixelSize(R.dimen.tile_size);
@@ -448,23 +451,34 @@ public class MainActivity extends Activity {
         final int finalTileSizePx = Math.max(48, Math.min(maxTileForClamp, adjustedTileSize));
 
         // show progress dialog if requested
-        final ProgressDialog pd = showProgDlg ? ProgressDialog.show(this, "", "Loading tiles...", true, false) : null;
+        //final ProgressDialog pd = showProgDlg ? ProgressDialog.show(this, "", "Loading tiles...", true, false) : null;
 
         final Handler handler = new Handler(Looper.getMainLooper());
+
+        final int runGen = populateGen.incrementAndGet();
 
         new Thread(new Runnable() {
                 @Override
                 public void run() {
                     for (int index = 0; index < apps.size(); index++) {
+                        // If a newer populate run has started, abort this run
+                        if (runGen != populateGen.get()) return;
+
                         final ResolveInfo app = apps.get(index);
                         // Load icon and label off the UI thread where possible
                         final Drawable appIcon = app.loadIcon(pm);
                         final CharSequence appLabel = app.loadLabel(pm);
                         final int position = index;
 
+                        // Before posting, check again to avoid posting stale tasks
+                        if (runGen != populateGen.get()) return;
+
                         handler.post(new Runnable() {
                                 @Override
                                 public void run() {
+                                    // If a newer run started while this task was queued, skip
+                                    if (runGen != populateGen.get()) return;
+
                                     final View tileView = getLayoutInflater()
                                         .inflate(R.layout.tile, tileGrid, false);
 
@@ -514,7 +528,7 @@ public class MainActivity extends Activity {
                                     tileGrid.addView(tileView);
 
                                     if (compatibilityCheck) {
-                                        Intent launch = pm.getLaunchIntentForPackage(apps.get(position).activityInfo.packageName);
+                                        final Intent launch = pm.getLaunchIntentForPackage(apps.get(position).activityInfo.packageName);
                                         final ActivityOptions opts = ActivityOptions.makeCustomAnimation(
                                             MainActivity.this, R.anim.pers_enter, R.anim.pers_exit);
                                         tileView.setOnClickListener(new OnClickListener() {
@@ -578,6 +592,7 @@ public class MainActivity extends Activity {
                         }
                     }
 
+                    /*
                     if (pd != null) {
                         handler.post(new Runnable() {
                                 @Override
@@ -585,7 +600,7 @@ public class MainActivity extends Activity {
                                     if (pd.isShowing()) pd.dismiss();
                                 }
                             });
-                    }
+                    } */
                 }
             }).start();
 

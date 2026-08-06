@@ -14,10 +14,10 @@
             android:title="Show App's Tile Icon"         
             android:defaultValue="true"/>
 
-        <SwitchPreference
+        <!--<SwitchPreference
             android:key="showprogdlg"
             android:title="Show Progress Dialog on Create/Rotate"         
-            android:defaultValue="false"/>
+            android:defaultValue="false"/>-->
 
         <SwitchPreference
             android:key="shadowsearchbar"
