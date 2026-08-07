@@ -1,0 +1,3 @@
+# SPOILERS!
+
+Sorry that it doesn't look like the real Windows Phone (Portrait) or Windows 8 Start Screen (Landscape) but features will still be updated soon...
