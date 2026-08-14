@@ -21,6 +21,8 @@ TilesEight is an Android home launcher inspired by Windows Phone and Windows 8 d
 - App launch animation with Windows-style visual effect
 - About dialog with GitHub link
 
+For Screenshots, [click here](screenshots.md)
+
 ## Settings
 
 TilesEight includes a settings screen where users can configure:
@@ -57,6 +59,8 @@ TilesEight includes a settings screen where users can configure:
 - The launcher checks whether TilesEight is set as the default home app and prompts the user if not.
 - The app loads installed launcher apps dynamically and excludes itself from the tile grid.
 - The tile size dialog stores separate values for portrait and landscape modes.
+
+[Click here to show spoilers!](spoilers.md)
 
 ## License
 
