@@ -34,13 +34,16 @@ import android.widget.ScrollView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import java.util.ArrayList;
 import java.util.List;
 import android.widget.LinearLayout;
 import android.view.ViewGroup;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
     public static final int ccLandscape = 5;
     public static final int ccPortrait = 3;
     //public static final int rcLandscape = 4;
@@ -69,7 +72,38 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initializeViews();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (!Environment.isExternalStorageManager()) {
+                // Permission is not granted, launch the system settings intent
+                try {
+                    Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                    Uri uri = Uri.fromParts("package", getPackageName(), null);
+                    intent.setData(uri);
+                    startActivity(intent);
+                } catch (Exception e) {
+                    // Fallback to the general "All Files Access" settings page if the deep link fails
+                    Intent intent = new Intent();
+                    intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+                    startActivity(intent);
+                }
+            }
+            else {
+                initializeViews();
+            }
+        } else {
+            // For devices below Android 11, use regular runtime permissions (READ/WRITE)
+            // Implement normal ActivityCompat.requestPermissions flow here
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_DENIED) {
+                ActivityCompat.requestPermissions(this, new String[]{
+                                       Manifest.permission.READ_EXTERNAL_STORAGE
+                                   },
+                                   WALLPAPER_ACCESS_CODE);
+            }
+            else {
+                initializeViews();
+            }
+        }
     }
 
     @Override
@@ -99,33 +133,6 @@ public class MainActivity extends Activity {
         segoer = Typeface.createFromAsset(getAssets(),
                                            "segoe_ui_light.ttf");
         title.setTypeface(segoer);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            if (!Environment.isExternalStorageManager()) {
-                // Permission is not granted, launch the system settings intent
-                try {
-                    Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
-                    Uri uri = Uri.fromParts("package", getPackageName(), null);
-                    intent.setData(uri);
-                    startActivity(intent);
-                } catch (Exception e) {
-                    // Fallback to the general "All Files Access" settings page if the deep link fails
-                    Intent intent = new Intent();
-                    intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
-                    startActivity(intent);
-                }
-            }
-        } else {
-            // For devices below Android 11, use regular runtime permissions (READ/WRITE)
-            // Implement normal ActivityCompat.requestPermissions flow here
-            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_DENIED) {
-                requestPermissions(new String[]{
-                                       Manifest.permission.READ_EXTERNAL_STORAGE
-                                   },
-                                   WALLPAPER_ACCESS_CODE);
-            }
-        }
 
         if (LauncherUtils.isNotDefaultLauncher(this)) {
             AlertDialog dialog = new AlertDialog.Builder(this)
