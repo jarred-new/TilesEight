@@ -1,0 +1,21 @@
+{
+  "allFiles": [
+    {
+      "file": "/storage/emulated/0/CodeOnTheGoProjects/TilesEight/build.gradle",
+      "selection": {
+        "end": {
+          "column": 1,
+          "index": 327,
+          "line": 20
+        },
+        "start": {
+          "column": 1,
+          "index": 327,
+          "line": 20
+        }
+      }
+    }
+  ],
+  "projectPath": "/storage/emulated/0/CodeOnTheGoProjects/TilesEight",
+  "selectedFile": "/storage/emulated/0/CodeOnTheGoProjects/TilesEight/build.gradle"
+}
