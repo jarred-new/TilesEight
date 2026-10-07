@@ -34,18 +34,48 @@
       "file": "/storage/emulated/0/CodeOnTheGoProjects/TilesEight/app/build.gradle",
       "selection": {
         "end": {
+          "column": 17,
+          "index": 215,
+          "line": 11
+        },
+        "start": {
+          "column": 17,
+          "index": 215,
+          "line": 11
+        }
+      }
+    },
+    {
+      "file": "/storage/emulated/0/CodeOnTheGoProjects/TilesEight/gradle.properties",
+      "selection": {
+        "end": {
           "column": 0,
-          "index": 631,
-          "line": 36
+          "index": 0,
+          "line": 0
         },
         "start": {
           "column": 0,
-          "index": 631,
-          "line": 36
+          "index": 0,
+          "line": 0
+        }
+      }
+    },
+    {
+      "file": "/storage/emulated/0/CodeOnTheGoProjects/TilesEight/app/src/main/java/com/jarrredapps/win8remastered/MainActivity.java",
+      "selection": {
+        "end": {
+          "column": 0,
+          "index": 0,
+          "line": 0
+        },
+        "start": {
+          "column": 0,
+          "index": 0,
+          "line": 0
         }
       }
     }
   ],
   "projectPath": "/storage/emulated/0/CodeOnTheGoProjects/TilesEight",
-  "selectedFile": "/storage/emulated/0/CodeOnTheGoProjects/TilesEight/app/build.gradle"
+  "selectedFile": "/storage/emulated/0/CodeOnTheGoProjects/TilesEight/app/src/main/java/com/jarrredapps/win8remastered/MainActivity.java"
 }
