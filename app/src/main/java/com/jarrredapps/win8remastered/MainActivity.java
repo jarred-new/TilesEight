@@ -12,8 +12,10 @@ import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
@@ -98,35 +100,28 @@ public class MainActivity extends Activity {
                                            "segoe_ui_light.ttf");
         title.setTypeface(segoer);
 
-        if (Build.VERSION.SDK_INT >= 33) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (!Environment.isExternalStorageManager()) {
+                // Permission is not granted, launch the system settings intent
+                try {
+                    Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                    Uri uri = Uri.fromParts("package", getPackageName(), null);
+                    intent.setData(uri);
+                    startActivity(intent);
+                } catch (Exception e) {
+                    // Fallback to the general "All Files Access" settings page if the deep link fails
+                    Intent intent = new Intent();
+                    intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+                    startActivity(intent);
+                }
+            }
+        } else {
+            // For devices below Android 11, use regular runtime permissions (READ/WRITE)
+            // Implement normal ActivityCompat.requestPermissions flow here
             if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_DENIED &&
-                checkSelfPermission(Manifest.permission.MANAGE_EXTERNAL_STORAGE)
                 == PackageManager.PERMISSION_DENIED) {
-                AlertDialog dialog = new AlertDialog.Builder(this)
-                    .setTitle("Before we start...")
-                    .setMessage("Please grant the permission to access the wallpaper and other files. After that, click OK to restart the app to set the app's wallpaper to the system wallpaper")
-                    .setCancelable(false)
-                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            // Restart the App
-                            Intent intent = getPackageManager().getLaunchIntentForPackage(getPackageName());
-                            if (intent != null) {
-                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                startActivity(intent);
-                            }
-                            finish();
-                            android.os.Process.killProcess(android.os.Process.myPid());
-                            System.exit(0);
-                        }
-                    })
-                    .create();
-                dialog.show();
-
                 requestPermissions(new String[]{
-                                       Manifest.permission.READ_EXTERNAL_STORAGE,
-                                       Manifest.permission.MANAGE_EXTERNAL_STORAGE
+                                       Manifest.permission.READ_EXTERNAL_STORAGE
                                    },
                                    WALLPAPER_ACCESS_CODE);
             }
