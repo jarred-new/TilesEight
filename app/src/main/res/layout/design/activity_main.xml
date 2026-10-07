@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<org.appdevforall.codeonthego.layouteditor.editor.palette.layouts.FrameLayoutDesign
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/main">
 
-    <ImageView
+    <org.appdevforall.codeonthego.layouteditor.editor.palette.widgets.ImageViewDesign
         android:id="@+id/wallpaperView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"/>
 
-    <View
+    <org.appdevforall.codeonthego.layouteditor.editor.palette.widgets.ViewDesign
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#66000000"/>
 
-    <LinearLayout
+    <org.appdevforall.codeonthego.layouteditor.editor.palette.layouts.LinearLayoutDesign
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
+        <org.appdevforall.codeonthego.layouteditor.editor.palette.layouts.LinearLayoutDesign
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -32,22 +32,22 @@
             android:layout_marginTop="16dp"
             android:gravity="center_vertical">
 
-            <TextView
+            <org.appdevforall.codeonthego.layouteditor.editor.palette.text.TextViewDesign
                 android:id="@+id/title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Start"
                 android:textColor="#FFFFFF"
-                android:textSize="28sp"/>
+                android:textSize="34sp"/>
 
-            <SearchView
+            <org.appdevforall.codeonthego.layouteditor.editor.palette.widgets.SearchViewDesign
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/searchBar"/>
-        </LinearLayout>
+        </org.appdevforall.codeonthego.layouteditor.editor.palette.layouts.LinearLayoutDesign>
 
-        <ScrollView
+        <org.appdevforall.codeonthego.layouteditor.editor.palette.containers.ScrollViewDesign
             android:id="@+id/scrollView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -55,20 +55,20 @@
             android:fillViewport="true"
             android:scrollbars="none">
 
-            <FrameLayout
+            <org.appdevforall.codeonthego.layouteditor.editor.palette.layouts.FrameLayoutDesign
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="14dp">
 
-                <GridLayout
+                <org.appdevforall.codeonthego.layouteditor.editor.palette.legacy.GridLayoutDesign
                     android:id="@+id/tileGrid"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:columnCount="3"
                     android:orientation="horizontal"/>
-            </FrameLayout>
-        </ScrollView>
-    </LinearLayout>
-</FrameLayout>
+            </org.appdevforall.codeonthego.layouteditor.editor.palette.layouts.FrameLayoutDesign>
+        </org.appdevforall.codeonthego.layouteditor.editor.palette.containers.ScrollViewDesign>
+    </org.appdevforall.codeonthego.layouteditor.editor.palette.layouts.LinearLayoutDesign>
+</org.appdevforall.codeonthego.layouteditor.editor.palette.layouts.FrameLayoutDesign>
 
