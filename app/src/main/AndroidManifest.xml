@@ -23,6 +23,12 @@
 
     <!-- have full network access -->
     <uses-permission android:name="android.permission.INTERNET"/>
+    
+    <!-- Add this line to bypass package visibility restrictions -->
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
+    
+    <!-- Also add tracking for Android 15/16 native Private Spaces (Optional but highly recommended) -->
+    <uses-permission android:name="android.permission.ACCESS_HIDDEN_PROFILES" />
 
     <application
         android:icon="@drawable/ic_launcher"
