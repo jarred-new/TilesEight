@@ -37,14 +37,10 @@ TilesEight includes a settings screen where users can configure:
 
 ## Requirements
 
-- Android SDK: compileSdkVersion 33
-- minSdkVersion 21
-- targetSdkVersion 26
+- Android SDK: compileSdkVersion 36
+- minSdkVersion 23
+- targetSdkVersion 36
 - Java / Android Studio compatible with Android Gradle Plugin
-
-## Build & Run
-
-### NOTE: This project was created and compiled on a legacy Android IDE, AIDE, which it uses the Eclipse ADT format. So, at the welcome screen in Android Studio, look at the top-right three dots, and click Import Project (Eclipse ADT, Gradle, etc), and then you may now proceed to import this project.
 
 ## Project Structure
 
