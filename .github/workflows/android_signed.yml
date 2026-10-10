@@ -2,8 +2,9 @@ name: Android CI/CD (signed)
 
 on:
   push:
-    tags:
-      - 'v*' # Triggers the workflow only when a tag starting with 'v' is pushed
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   build:
