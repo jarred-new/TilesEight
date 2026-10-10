@@ -119,8 +119,38 @@
           "line": 5
         }
       }
+    },
+    {
+      "file": "/storage/emulated/0/CodeOnTheGoProjects/TilesEight/app/src/main/res/layout/aboutappview.xml",
+      "selection": {
+        "end": {
+          "column": 37,
+          "index": 37,
+          "line": 0
+        },
+        "start": {
+          "column": 37,
+          "index": 37,
+          "line": 0
+        }
+      }
+    },
+    {
+      "file": "/storage/emulated/0/CodeOnTheGoProjects/TilesEight/app/src/main/res/anim/pers_enter.xml",
+      "selection": {
+        "end": {
+          "column": 62,
+          "index": 101,
+          "line": 1
+        },
+        "start": {
+          "column": 62,
+          "index": 101,
+          "line": 1
+        }
+      }
     }
   ],
   "projectPath": "/storage/emulated/0/CodeOnTheGoProjects/TilesEight",
-  "selectedFile": "/storage/emulated/0/CodeOnTheGoProjects/TilesEight/app/src/main/java/com/jarrredapps/win8remastered/MainActivity.java"
+  "selectedFile": "/storage/emulated/0/CodeOnTheGoProjects/TilesEight/app/src/main/res/anim/pers_enter.xml"
 }
