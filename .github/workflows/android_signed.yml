@@ -39,9 +39,9 @@ jobs:
       env: 
         BUILD_TOOLS_VERSION: "34.0.0"
 
-    - name: Create GitHub Release and Upload APK
-      uses: ncipollo/release-action@v1
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v7
       with:
-        artifacts: ${{ steps.sign_app.outputs.signedReleaseFile }}
-        token: ${{ secrets.GITHUB_TOKEN }}
-        generateReleaseNotes: true # Automatically generates release notes based on commit history
+        name: TilesEight-Android-signed
+        path: ${{ steps.sign_app.outputs.signedReleaseFile }}
+        archive: false    
