@@ -42,6 +42,22 @@ TilesEight includes a settings screen where users can configure:
 - targetSdkVersion 36
 - Java / Android Studio compatible with Android Gradle Plugin
 
+## Installation
+
+- Download the latest apk at the Releases tab
+- Install the apk and make sure you to bypass the Play Protect harmful app detection.
+- Do not launch the app yet, unless you enable \"**All Files Access**\" (MANAGE_EXTERNAL_STORAGE) for TilesEight.
+- After enabling, you may start the launcher.
+- Next, make the TilesEight as a default home launcher.
+- Then, enjoy your Windows Phone simulator. hehe...
+
+## Warning
+As I remember that some other phones,
+it might be making your phone useless or 
+having issues when setting TilesEight as a default launcher.
+
+If you have issues, contact reyesgavinjarred@gmail.com or in the Github Issues.
+
 ## Project Structure
 
 - `app/src/main/AndroidManifest.xml` — app permissions and launcher intent
@@ -59,9 +75,4 @@ TilesEight includes a settings screen where users can configure:
 [Click here to show spoilers!](spoilers.md)
 
 ## License
-
 This project is licensed under the GNU General Public License v3.0. See `LICENSE.md` for details.
-
-## Contact
-
-Created by Jarred. For more information or to star the project, visit the GitHub repository. If you want a feature request or report a bug, email reyesgavinjarred@gmail.com

@@ -36,3 +36,6 @@
 
 *Hover animation effect on a tile before launch.*
 
+![](gifsReadme/error_on_start.jpg)
+
+*Error Screen when not granted All Files Access for TilesEight. (v 1.1)*

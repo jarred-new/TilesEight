@@ -169,18 +169,48 @@
       "file": "/storage/emulated/0/CodeOnTheGoProjects/TilesEight/.github/workflows/android_signed.yml",
       "selection": {
         "end": {
-          "column": 8,
-          "index": 891,
-          "line": 39
+          "column": 0,
+          "index": 921,
+          "line": 40
         },
         "start": {
-          "column": 8,
-          "index": 891,
-          "line": 39
+          "column": 0,
+          "index": 921,
+          "line": 40
+        }
+      }
+    },
+    {
+      "file": "/storage/emulated/0/CodeOnTheGoProjects/TilesEight/.github/workflows/android.yml",
+      "selection": {
+        "end": {
+          "column": 22,
+          "index": 685,
+          "line": 33
+        },
+        "start": {
+          "column": 4,
+          "index": 498,
+          "line": 28
+        }
+      }
+    },
+    {
+      "file": "/storage/emulated/0/CodeOnTheGoProjects/TilesEight/README.md",
+      "selection": {
+        "end": {
+          "column": 10,
+          "index": 2833,
+          "line": 76
+        },
+        "start": {
+          "column": 10,
+          "index": 2833,
+          "line": 76
         }
       }
     }
   ],
   "projectPath": "/storage/emulated/0/CodeOnTheGoProjects/TilesEight",
-  "selectedFile": "/storage/emulated/0/CodeOnTheGoProjects/TilesEight/.github/workflows/android_signed.yml"
+  "selectedFile": "/storage/emulated/0/CodeOnTheGoProjects/TilesEight/README.md"
 }
