@@ -149,8 +149,23 @@
           "line": 1
         }
       }
+    },
+    {
+      "file": "/storage/emulated/0/CodeOnTheGoProjects/TilesEight/app/src/main/res/anim/pers_exit.xml",
+      "selection": {
+        "end": {
+          "column": 62,
+          "index": 101,
+          "line": 1
+        },
+        "start": {
+          "column": 62,
+          "index": 101,
+          "line": 1
+        }
+      }
     }
   ],
   "projectPath": "/storage/emulated/0/CodeOnTheGoProjects/TilesEight",
-  "selectedFile": "/storage/emulated/0/CodeOnTheGoProjects/TilesEight/app/src/main/res/anim/pers_enter.xml"
+  "selectedFile": "/storage/emulated/0/CodeOnTheGoProjects/TilesEight/app/src/main/res/anim/pers_exit.xml"
 }
